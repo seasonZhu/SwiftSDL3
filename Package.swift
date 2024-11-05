@@ -7,6 +7,14 @@ var exclude: [String] = []
 
 // common
 sources += [
+    "src/atomic",
+    "src/camera",
+    "src/core/SDL_core_unsupported.c",
+    "src/cpuinfo",
+    "src/dialog/SDL_dialog_utils.c",
+    "src/dynapi/SDL_dynapi.c",
+    "src/events",
+    "src/process",
     "src/SDL_assert.c",
     "src/SDL_error.c",
     "src/SDL_guid.c",
@@ -17,16 +25,8 @@ sources += [
     "src/SDL_properties.c",
     "src/SDL_utils.c",
     "src/SDL.c",
-    "src/atomic",
-    "src/camera",
-    "src/cpuinfo",
-    "src/events",
-    "src/process",
     "src/storage",
     "src/time",
-    "src/dynapi/SDL_dynapi.c",
-    "src/core/SDL_core_unsupported.c",
-    "src/dialog/SDL_dialog_utils.c",
 ]
 
 // filesystem
@@ -54,7 +54,6 @@ sources += [
     "src/stdlib/SDL_memcpy.c",
     "src/stdlib/SDL_memmove.c",
     "src/stdlib/SDL_memset.c",
-    // "src/stdlib/SDL_mslibc_x64.masm",
     "src/stdlib/SDL_mslibc.c",
     "src/stdlib/SDL_murmur3.c",
     "src/stdlib/SDL_qsort.c",
@@ -62,10 +61,13 @@ sources += [
     "src/stdlib/SDL_stdlib.c",
     "src/stdlib/SDL_string.c",
     "src/stdlib/SDL_strtokr.c",
+    // "src/stdlib/SDL_mslibc_x64.masm",
 ]
 
 // video
 sources += [
+    "src/video/dummy/",
+    "src/video/offscreen/",
     "src/video/SDL_blit_0.c",
     "src/video/SDL_blit_1.c",
     "src/video/SDL_blit_A.c",
@@ -83,12 +85,10 @@ sources += [
     "src/video/SDL_RLEaccel.c",
     "src/video/SDL_stretch.c",
     "src/video/SDL_surface.c",
+    "src/video/SDL_video_unsupported.c",
     "src/video/SDL_video.c",
     "src/video/SDL_vulkan_utils.c",
     "src/video/SDL_yuv.c",
-    "src/video/dummy/",
-    "src/video/offscreen/",
-    "src/video/SDL_video_unsupported.c",
 ]
 
 // yuv2rgb
@@ -110,13 +110,13 @@ sources += [
 
 // render
 sources += [
-    "src/render/SDL_render.c",
-    "src/render/SDL_yuv_sw.c",
-    "src/render/software/",
 
     "src/render/gpu/SDL_pipeline_gpu.c",
     "src/render/gpu/SDL_render_gpu.c",
     "src/render/gpu/SDL_shaders_gpu.c",
+    "src/render/SDL_render.c",
+    "src/render/SDL_yuv_sw.c",
+    "src/render/software/",
 ]
 
 // sensor
@@ -132,11 +132,11 @@ sources += [
 
 // joystick
 sources += [
-    "src/joystick/SDL_joystick.c",
-    "src/joystick/SDL_gamepad.c",
-    "src/joystick/SDL_steam_virtual_gamepad.c",
     "src/joystick/controller_type.c",
     "src/joystick/hidapi/",
+    "src/joystick/SDL_gamepad.c",
+    "src/joystick/SDL_joystick.c",
+    "src/joystick/SDL_steam_virtual_gamepad.c",
     "src/joystick/virtual/",
 ]
 exclude += [
@@ -146,16 +146,16 @@ exclude += [
 
 // audio
 sources += [
+    "src/audio/disk/",
+    "src/audio/dummy/",
     "src/audio/SDL_audio.c",
     "src/audio/SDL_audiocvt.c",
     "src/audio/SDL_audiodev.c",
-    "src/audio/SDL_audiotypecvt.c",
     "src/audio/SDL_audioqueue.c",
     "src/audio/SDL_audioresample.c",
+    "src/audio/SDL_audiotypecvt.c",
     "src/audio/SDL_mixer.c",
     "src/audio/SDL_wave.c",
-    "src/audio/dummy/",
-    "src/audio/disk/",
 ]
 
 // hidapi
