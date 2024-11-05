@@ -1,18 +1,4 @@
 module SwiftSDL3 {
     header "SDL3/SDL.h"
     export *
-    link framework "AudioToolbox"
-    link framework "AVFoundation"
-    link framework "CoreAudio"
-    link framework "CoreGraphics"
-    link framework "CoreHaptics"
-    link framework "CoreMotion"
-    link framework "Foundation"
-    link framework "GameController"
-    link framework "IOKit"
-    link framework "Metal"
-    link framework "QuartzCore"
-    link framework "Carbon"
-    link framework "Cocoa"
-    link framework "ForceFeedback"
 }

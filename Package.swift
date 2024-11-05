@@ -105,7 +105,7 @@ sources += [
 
 // thread
 sources += [
-    "src/thread/SDL_thread.c"
+    "src/thread/SDL_thread.c",
 ]
 
 // render
@@ -132,7 +132,12 @@ sources += [
 
 // joystick
 sources += [
-    "src/joystick/"
+    "src/joystick/SDL_joystick.c",
+    "src/joystick/SDL_gamepad.c",
+    "src/joystick/SDL_steam_virtual_gamepad.c",
+    "src/joystick/controller_type.c",
+    "src/joystick/hidapi/",
+    "src/joystick/virtual/",
 ]
 exclude += [
     "src/joystick/check_8bitdo.sh",
@@ -192,28 +197,92 @@ sources += [
     "src/misc/SDL_url.c"
 ]
 
-// macOS specific
-sources += [
-    "src/filesystem/cocoa",
-    "src/video/cocoa",
-    "src/timer/unix",
-    "src/dialog/cocoa",
-    "src/thread/pthread",
-    "src/loadso/dlopen",
-    "src/render/opengl",
-    "src/render/opengles2",
-    "src/render/metal",
-    "src/haptic/darwin",
-    "src/joystick/darwin",
-    "src/audio/coreaudio",
-    "src/power/macos",
-    "src/locale/macos",
-    "src/misc/macos",
-]
-exclude += [
-    "src/render/metal/build-metal-shaders.sh",
-    "src/render/metal/SDL_shaders_metal.metal",
-]
+#if os(macOS)
+    // macOS specific
+    sources += [
+        "src/filesystem/cocoa",
+        "src/video/cocoa",
+        "src/timer/unix",
+        "src/dialog/cocoa",
+        "src/thread/pthread",
+        "src/loadso/dlopen",
+        "src/render/opengl",
+        "src/render/opengles2",
+        "src/render/metal",
+        "src/haptic/darwin",
+        "src/joystick/darwin",
+        "src/audio/coreaudio",
+        "src/power/macos",
+        "src/locale/macos",
+        "src/misc/macos",
+    ]
+    exclude += [
+        "src/render/metal/build-metal-shaders.sh",
+        "src/render/metal/SDL_shaders_metal.metal",
+    ]
+#endif
+#if os(Windows)
+    // Windows specific
+    sources += [
+        "src/audio/directsound",
+        "src/audio/wasapi",
+        "src/core/windows",
+        "src/dialog/windows",
+        "src/filesystem/windows",
+        "src/gpu/d3d11/",
+        "src/gpu/d3d12/",
+        "src/haptic/windows",
+        "src/joystick/windows/",
+        "src/libm",
+        "src/loadso/windows",
+        "src/locale/windows",
+        "src/main/windows/",
+        "src/misc/windows",
+        "src/power/windows",
+        "src/render/SDL_d3dmath.c",
+        "src/render/opengl",
+        "src/render/direct3d/",
+        "src/render/direct3d11/",
+        "src/render/direct3d12/",
+        "src/render/opengles2/",
+        "src/render/vulkan/",
+        "src/sensor/windows/",
+        "src/thread/generic/SDL_syscond.c",
+        "src/thread/generic/SDL_sysrwlock.c",
+        "src/thread/windows",
+        "src/timer/windows",
+        "src/video/windows",
+        // "src/render/direct3d",
+    ]
+    exclude += [
+        "src/core/windows/version.rc",
+        "src/gpu/d3d11/compile_shaders.bat",
+        "src/gpu/d3d12/compile_shaders.bat",
+        "src/gpu/d3d12/compile_shaders_xbox.bat",
+        "src/render/direct3d/compile_shaders.bat",
+        "src/render/direct3d/D3D9_PixelShader_YUV.hlsl",
+        "src/render/direct3d11/compile_shaders.bat",
+        "src/render/direct3d11/D3D11_PixelShader_Advanced.hlsl",
+        "src/render/direct3d11/D3D11_PixelShader_Colors.hlsl",
+        "src/render/direct3d11/D3D11_PixelShader_Common.hlsli",
+        "src/render/direct3d11/D3D11_PixelShader_Textures.hlsl",
+        "src/render/direct3d11/D3D11_VertexShader.hlsl",
+        "src/render/direct3d12/compile_shaders.bat",
+        "src/render/direct3d12/compile_shaders_xbox.bat",
+        "src/render/direct3d12/D3D12_PixelShader_Advanced.hlsl",
+        "src/render/direct3d12/D3D12_PixelShader_Colors.hlsl",
+        "src/render/direct3d12/D3D12_PixelShader_Common.hlsli",
+        "src/render/direct3d12/D3D12_PixelShader_Textures.hlsl",
+        "src/render/direct3d12/D3D12_Shader_Common.hlsli",
+        "src/render/direct3d12/D3D12_VertexShader.hlsl",
+        "src/render/vulkan/compile_shaders.bat",
+        "src/render/vulkan/VULKAN_VertexShader.hlsl",
+        "src/render/vulkan/VULKAN_PixelShader_Textures.hlsl",
+        "src/render/vulkan/VULKAN_PixelShader_Advanced.hlsl",
+        "src/render/vulkan/VULKAN_PixelShader_Colors.hlsl",
+        "src/render/vulkan/VULKAN_PixelShader_Common.hlsli",
+    ]
+#endif
 
 let package = Package(
     name: "SwiftSDL3",
@@ -242,7 +311,51 @@ let package = Package(
                 .define("SDL_USE_BUILTIN_OPENGL_DEFINITIONS"),
             ],
             linkerSettings: [
-                .linkedLibrary("iconv")
+                .linkedLibrary(
+                    "iconv",
+                    .when(platforms: [.macOS, .iOS, .tvOS, .watchOS])
+                ),
+                .linkedFramework(
+                    "AudioToolbox",
+                    .when(platforms: [.macOS, .iOS, .tvOS, .watchOS])
+                ),
+                .linkedFramework(
+                    "AVFoundation",
+                    .when(platforms: [.macOS, .iOS, .tvOS, .watchOS])
+                ),
+                .linkedFramework("CoreAudio", .when(platforms: [.macOS, .iOS, .tvOS, .watchOS])),
+                .linkedFramework(
+                    "CoreGraphics",
+                    .when(platforms: [.macOS, .iOS, .tvOS, .watchOS])
+                ),
+                .linkedFramework("CoreHaptics", .when(platforms: [.macOS, .iOS, .tvOS, .watchOS])),
+                .linkedFramework("CoreMotion", .when(platforms: [.macOS, .iOS, .tvOS, .watchOS])),
+                .linkedFramework("Foundation", .when(platforms: [.macOS, .iOS, .tvOS, .watchOS])),
+                .linkedFramework(
+                    "GameController",
+                    .when(platforms: [.macOS, .iOS, .tvOS, .watchOS])
+                ),
+                .linkedFramework("IOKit", .when(platforms: [.macOS, .iOS, .tvOS, .watchOS])),
+                .linkedFramework("Metal", .when(platforms: [.macOS, .iOS, .tvOS, .watchOS])),
+                .linkedFramework("QuartzCore", .when(platforms: [.macOS, .iOS, .tvOS, .watchOS])),
+                .linkedFramework("Carbon", .when(platforms: [.macOS, .iOS, .tvOS, .watchOS])),
+                .linkedFramework("Cocoa", .when(platforms: [.macOS, .iOS, .tvOS, .watchOS])),
+                .linkedFramework(
+                    "ForceFeedback",
+                    .when(platforms: [.macOS, .iOS, .tvOS, .watchOS])
+                ),
+
+                .linkedLibrary("User32", .when(platforms: [.windows])),
+                .linkedLibrary("Shell32", .when(platforms: [.windows])),
+                .linkedLibrary("Cfgmgr32", .when(platforms: [.windows])),
+                .linkedLibrary("Advapi32", .when(platforms: [.windows])),
+                .linkedLibrary("Winmm", .when(platforms: [.windows])),
+                .linkedLibrary("SetupAPI", .when(platforms: [.windows])),
+                .linkedLibrary("Gdi32", .when(platforms: [.windows])),
+                .linkedLibrary("Ole32", .when(platforms: [.windows])),
+                .linkedLibrary("Imm32", .when(platforms: [.windows])),
+                .linkedLibrary("Version", .when(platforms: [.windows])),    
+                .linkedLibrary("OleAut32", .when(platforms: [.windows])),
             ]
         ),
         .executableTarget(
