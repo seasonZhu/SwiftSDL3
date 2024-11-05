@@ -105,7 +105,7 @@ sources += [
 
 // thread
 sources += [
-    "src/thread/SDL_thread.c",
+    "src/thread/SDL_thread.c"
 ]
 
 // render
@@ -201,20 +201,21 @@ sources += [
     // macOS specific
     sources += [
         "src/filesystem/cocoa",
-        "src/video/cocoa",
-        "src/timer/unix",
-        "src/dialog/cocoa",
-        "src/thread/pthread",
-        "src/loadso/dlopen",
-        "src/render/opengl",
-        "src/render/opengles2",
-        "src/render/metal",
-        "src/haptic/darwin",
-        "src/joystick/darwin",
         "src/audio/coreaudio",
-        "src/power/macos",
+        "src/dialog/cocoa",
+        "src/haptic/darwin",
+        "src/joystick/apple",
+        "src/joystick/darwin",
+        "src/loadso/dlopen",
         "src/locale/macos",
         "src/misc/macos",
+        "src/power/macos",
+        "src/render/metal",
+        "src/render/opengl",
+        "src/render/opengles2",
+        "src/thread/pthread",
+        "src/timer/unix",
+        "src/video/cocoa",
     ]
     exclude += [
         "src/render/metal/build-metal-shaders.sh",
@@ -354,7 +355,7 @@ let package = Package(
                 .linkedLibrary("Gdi32", .when(platforms: [.windows])),
                 .linkedLibrary("Ole32", .when(platforms: [.windows])),
                 .linkedLibrary("Imm32", .when(platforms: [.windows])),
-                .linkedLibrary("Version", .when(platforms: [.windows])),    
+                .linkedLibrary("Version", .when(platforms: [.windows])),
                 .linkedLibrary("OleAut32", .when(platforms: [.windows])),
             ]
         ),
