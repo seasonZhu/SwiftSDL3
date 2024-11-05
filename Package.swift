@@ -251,9 +251,9 @@ let package = Package(
                 "SwiftSDL3"
             ]
         ),
-        // .testTarget(
-        //   name: "SwiftSDL2Tests",
-        //   dependencies: ["SwiftSDL3"]
-        // ),
+        .testTarget(
+            name: "SwiftSDL3Tests",
+            dependencies: ["SwiftSDL3"]
+        ),
     ]
 )
