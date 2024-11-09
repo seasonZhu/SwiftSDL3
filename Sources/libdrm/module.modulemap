@@ -1,0 +1,4 @@
+module libdrm {
+    umbrella header "umbrella.h"
+    link "drm"
+}

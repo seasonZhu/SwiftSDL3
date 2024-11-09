@@ -1,0 +1,4 @@
+module libdecor {
+    umbrella header "umbrella.h"
+    link "decor-0"
+}

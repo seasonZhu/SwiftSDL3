@@ -1,0 +1,4 @@
+module dbus {
+    umbrella header "umbrella.h"
+    link "dbus-1"
+}

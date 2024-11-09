@@ -222,6 +222,7 @@ sources += [
         "src/render/metal/SDL_shaders_metal.metal",
     ]
 #endif
+
 #if os(Windows)
     // Windows specific
     sources += [
@@ -285,6 +286,44 @@ sources += [
     ]
 #endif
 
+#if os(Linux)
+    // macOS specific
+    sources += [
+        "wayland-generated-protocols",
+        "src/audio/alsa",
+        "src/audio/pulseaudio",
+        "src/audio/sndio",
+        "src/core/linux",
+        "src/core/unix",
+        "src/dialog/unix",
+        "src/filesystem/unix",
+        "src/haptic/linux",
+        "src/joystick/linux",
+        "src/joystick/steam",
+        "src/loadso/dlopen",
+        "src/locale/unix",
+        "src/misc/unix",
+        "src/power/linux",
+        "src/render/vulkan",
+        "src/render/opengl",
+        "src/render/opengles2",
+        "src/render/SDL_d3dmath.c",
+        "src/thread/pthread",
+        "src/timer/unix",
+        "src/video/kmsdrm",
+        "src/video/wayland",
+        "src/video/x11",
+    ]
+    exclude += [
+        "src/render/vulkan/compile_shaders.bat",
+        "src/render/vulkan/VULKAN_VertexShader.hlsl",
+        "src/render/vulkan/VULKAN_PixelShader_Textures.hlsl",
+        "src/render/vulkan/VULKAN_PixelShader_Advanced.hlsl",
+        "src/render/vulkan/VULKAN_PixelShader_Colors.hlsl",
+        "src/render/vulkan/VULKAN_PixelShader_Common.hlsli",
+    ]
+#endif
+
 let package = Package(
     name: "SwiftSDL3",
     platforms: [
@@ -303,11 +342,19 @@ let package = Package(
     targets: [
         .target(
             name: "SwiftSDL3",
+            dependencies: [
+                .target(name: "libdecor", condition: .when(platforms: [.linux])),
+                .target(name: "dbus", condition: .when(platforms: [.linux])),
+                .target(name: "ibus", condition: .when(platforms: [.linux])),
+                .target(name: "libdrm", condition: .when(platforms: [.linux])),
+            ],
             exclude: exclude,
             sources: sources,
             resources: [],
             cSettings: [
-                .headerSearchPath("include/build_config"),
+                .headerSearchPath("include/build_config", .when(platforms: [.macOS, .windows])),
+                .headerSearchPath("include/build_config_ubuntu", .when(platforms: [.linux])),
+                .headerSearchPath("wayland-generated-protocols", .when(platforms: [.linux])),
                 .headerSearchPath("src"),
                 .define("SDL_USE_BUILTIN_OPENGL_DEFINITIONS"),
             ],
@@ -357,7 +404,26 @@ let package = Package(
                 .linkedLibrary("Imm32", .when(platforms: [.windows])),
                 .linkedLibrary("Version", .when(platforms: [.windows])),
                 .linkedLibrary("OleAut32", .when(platforms: [.windows])),
+
+                .linkedLibrary("m", .when(platforms: [.linux])),
+
             ]
+        ),
+        .systemLibrary(
+            name: "libdecor", 
+            pkgConfig: "libdecor-0"
+        ),
+        .systemLibrary(
+            name: "dbus", 
+            pkgConfig: "dbus-1"
+        ),
+        .systemLibrary(
+            name: "ibus", 
+            pkgConfig: "ibus-1.0"
+        ),
+        .systemLibrary(
+            name: "libdrm", 
+            pkgConfig: "libdrm"
         ),
         .executableTarget(
             name: "Example",
