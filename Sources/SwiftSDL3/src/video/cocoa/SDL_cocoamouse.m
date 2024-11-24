@@ -506,9 +506,8 @@ void Cocoa_HandleMouseEvent(SDL_VideoDevice *_this, NSEvent *event)
         }
     }
 
-    // Shaft patch: use scrollingDeltaX/Y instead of deltaX/Y for trackpad scrolling
-    deltaX = [event scrollingDeltaX]; 
-    deltaY = [event scrollingDeltaY];
+    deltaX = [event deltaX]; 
+    deltaY = [event deltaY];
 
     if (seenWarp) {
         deltaX += (lastMoveX - data->lastWarpX);
@@ -526,8 +525,9 @@ void Cocoa_HandleMouseWheel(SDL_Window *window, NSEvent *event)
     SDL_MouseWheelDirection direction;
     CGFloat x, y;
 
-    x = -[event deltaX];
-    y = [event deltaY];
+    // Shaft patch: use scrollingDeltaX/Y instead of deltaX/Y for trackpad scrolling
+    x = -[event scrollingDeltaX];
+    y = [event scrollingDeltaY];
     direction = SDL_MOUSEWHEEL_NORMAL;
 
     if ([event isDirectionInvertedFromDevice] == YES) {
