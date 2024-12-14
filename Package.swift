@@ -234,6 +234,7 @@ sources += [
         "src/gpu/d3d11/",
         "src/gpu/d3d12/",
         "src/haptic/windows",
+        "src/joystick/gdk/",
         "src/joystick/windows/",
         "src/libm",
         "src/loadso/windows",
